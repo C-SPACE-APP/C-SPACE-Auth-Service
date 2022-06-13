@@ -4,8 +4,6 @@ const axios = require('axios')
 
 require('dotenv').config()
 
-// const { UserModel } = require('../schema')
-
 passport.serializeUser((user, done) => {
     done(null, user.googleId || user.id);
 });
