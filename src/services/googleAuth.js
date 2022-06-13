@@ -1,5 +1,6 @@
 const GoogleStrategy = require('passport-google-oauth20').Strategy
 const passport = require('passport')
+const axios = require('axios')
 
 require('dotenv').config()
 
@@ -19,39 +20,49 @@ passport.deserializeUser((id, done) => {
 passport.use(new GoogleStrategy({
     clientID: `${process.env.GOOGLE_CLIENT_ID}`,
     clientSecret: `${process.env.GOOGLE_CLIENT_SECRET}`,
-    callbackURL: "http://localhost:3000/auth/google/callback"
+    callbackURL: "http://localhost:3001/auth/google/callback"
     },
     async (accessToken, refreshToken, object0, profile, done) => {
+        if(profile._json.hd !== 'up.edu.ph') return done(null, false)
 
-        console.log(profile)
+        try {
+            const { data } = await axios({
+                method: 'post',
+                url: 'http://localhost:3002/app-events/',
+                data: {
+                    event: 'FIND_BY_GOOGLE_ID',
+                    data: {
+                        googleId: profile.id
+                    }
+                }
+            })
 
-        return done(null, false)
+            if(!data) {
+                const { data } = await axios({
+                    method: 'post',
+                    url: 'http://localhost:3002/app-events/',
+                    data: {
+                        event: 'ADD_USER',
+                        data: {
+                            googleId: profile.id,
+                            email: profile.emails[0].value,
+                            givenName: profile.name.givenName,
+                            lastName: profile.name.familyName
+                        }
+                    }
+                })
 
-        // if(profile._json.hd !== 'up.edu.ph') {
-        //     return done(null, false)
-        // }
+                if(!data) return done(null, false)
 
-        // await UserModel.findOne({ googleId: profile.id }, (err, doc) => {
-        //     if (err) {
-        //         console.log(`Error inside Strategy. Error: ${err}`);
-        //         return done(err, null);
-        //     }
+                return done(null, data)
+            }
 
-        //     if (!doc) {
-        //         const newUser = new UserModel({
-        //         googleId: profile.id,
-        //         givenName: profile.name.givenName,
-        //         lastName: profile.name.familyName,
-        //         email: profile.emails[0].value,
-        //         });
+            return done(null, data);
 
-        //         newUser.save();
-        //         return done(null, newUser);
-        //     } 
-        //     else{
-        //         return done(null, doc);
-        //     } 
-        // }).clone()
+        } catch(err) {
+            console.log(err);
+            return done(null, false)
+        }
 }));
 
 module.exports = passport

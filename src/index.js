@@ -3,18 +3,17 @@ const mongoose = require('mongoose')
 const session = require('express-session')
 const MongoStore = require('connect-mongo')
 
+const { databaseConnection } = require('./database')
 const server = require('./server')
 const { passport } = require('./services')
-const { databaseConnection } = require('./database')
 
 require('dotenv').config
 
 const start = async () => {
     const app = express()
 
-    let connection = null
     try {
-        connection = await databaseConnection(mongoose)
+        await databaseConnection(mongoose)
     } catch(err) {
         return
     }
