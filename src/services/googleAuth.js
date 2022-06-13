@@ -8,10 +8,19 @@ passport.serializeUser((user, done) => {
     done(null, user.googleId || user.id);
 });
 
-passport.deserializeUser((id, done) => {
-    UserModel.findOne({googleId: id}, (err, user) => {
-        done(null,user)
+passport.deserializeUser(async (id, done) => {
+    const { data } = await axios({
+        method: 'post',
+        url: 'http://localhost:3002/app-events/',
+        data: {
+            event: 'FIND_BY_GOOGLE_ID',
+            data: {
+                googleId: id
+            }
+        }
     })
+
+    if(data) done(null, data)
 })
 
 
