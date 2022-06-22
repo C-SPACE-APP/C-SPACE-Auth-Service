@@ -20,7 +20,9 @@ passport.deserializeUser(async (id, done) => {
         }
     })
 
-    if(data) done(null, data)
+    if(data.payload.user) return done(null, data.payload.user)
+    return done(null, false)
+    
 })
 
 
@@ -44,7 +46,7 @@ passport.use(new GoogleStrategy({
                 }
             })
 
-            if(!data) {
+            if(!data.payload.user) {
                 const { data } = await axios({
                     method: 'post',
                     url: 'http://localhost:3002/app-events/',
@@ -59,12 +61,12 @@ passport.use(new GoogleStrategy({
                     }
                 })
 
-                if(!data) return done(null, false)
+                if(!data.payload.user) return done(null, false)
 
-                return done(null, data)
+                return done(null, data.payload.user)
             }
 
-            return done(null, data);
+            return done(null, data.payload.user);
 
         } catch(err) {
             console.log(err);
