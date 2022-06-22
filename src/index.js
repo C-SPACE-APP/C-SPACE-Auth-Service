@@ -32,11 +32,11 @@ const start = async () => {
     
     await server(app)
 
-    const PORT = process.env.PORT || 3002
+    const PORT = process.env.PORT || 3003
 
     app.listen(PORT, (err) => {
         if(err) console.log(`Error starting app: ${err}`)
-        else console.log(`Started listening on port ${PORT}`)
+        else console.log(`Auth Service tarted listening on port ${PORT}`)
     })
 }
 
