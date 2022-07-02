@@ -25,8 +25,8 @@ const start = async () => {
             saveUninitialized: true,
             store: new MongoStore({ mongoUrl: mongoose.connection.client.s.url, collection: 'sessions'}),
             cookie: {
-                // expires: 24*60*60*1000      // day*hour*minute*second  1 day
-                expires: 10*60*1000      // minute*second  10 minutes    for demo purposes
+                expires: 24*60*60*1000      // day*hour*minute*second  1 day
+                // expires: 10*60*1000      // minute*second  10 minutes    for demo purposes
             }
         })
     )
