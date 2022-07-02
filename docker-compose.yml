@@ -6,8 +6,8 @@ services:
     ports:
       - '3003:3003'
     depends_on:
-      - mongo
-  mongo:
+      - auth-db
+  auth-db:
     container_name: auth-db
     image: mongo
     ports:
