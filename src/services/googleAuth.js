@@ -4,6 +4,13 @@ const axios = require('axios')
 
 require('dotenv').config()
 
+const {
+    GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECRET,
+    API_GATEWAY,
+    USER_SERVICE
+} = process.env
+
 passport.serializeUser((user, done) => {
     done(null, user.googleId || user.id);
 });
@@ -11,7 +18,7 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser(async (id, done) => {
     const { data } = await axios({
         method: 'post',
-        url: 'http://localhost:3002/app-events/',
+        url: `http://${USER_SERVICE}/app-events/`,
         data: {
             event: 'FIND_BY_GOOGLE_ID',
             data: {
@@ -27,9 +34,9 @@ passport.deserializeUser(async (id, done) => {
 
 
 passport.use(new GoogleStrategy({
-    clientID: `${process.env.GOOGLE_CLIENT_ID}`,
-    clientSecret: `${process.env.GOOGLE_CLIENT_SECRET}`,
-    callbackURL: "http://localhost:3001/auth/google/callback"
+    clientID: `${GOOGLE_CLIENT_ID}`,
+    clientSecret: `${GOOGLE_CLIENT_SECRET}`,
+    callbackURL: `http://${API_GATEWAY}/auth/google/callback`
     },
     async (accessToken, refreshToken, object0, profile, done) => {
         if(profile._json.hd !== 'up.edu.ph') return done(null, false)
@@ -37,7 +44,7 @@ passport.use(new GoogleStrategy({
         try {
             const { data } = await axios({
                 method: 'post',
-                url: 'http://localhost:3002/app-events/',
+                url: `http://${USER_SERVICE}/app-events/`,
                 data: {
                     event: 'FIND_BY_GOOGLE_ID',
                     data: {
@@ -49,7 +56,7 @@ passport.use(new GoogleStrategy({
             if(!data.payload.user) {
                 const { data } = await axios({
                     method: 'post',
-                    url: 'http://localhost:3002/app-events/',
+                    url: `http://${USER_SERVICE}/app-events/`,
                     data: {
                         event: 'ADD_USER',
                         data: {
