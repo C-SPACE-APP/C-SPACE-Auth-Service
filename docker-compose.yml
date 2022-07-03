@@ -7,8 +7,20 @@ services:
       - '3003:3003'
     depends_on:
       - auth-db
+    networks:
+      - cspace-backend
+      - auth-network
+        
   auth-db:
     container_name: auth-db
     image: mongo
     ports:
-      - '28003:27017'
+      - '27017:27017'
+    networks:
+      - auth-network
+
+networks:
+   cspace-backend:
+      external: true
+   auth-network:
+      external: true
