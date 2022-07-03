@@ -15,7 +15,7 @@ services:
     container_name: auth-db
     image: mongo
     ports:
-      - '27017:27017'
+      - '28003:27017'
     networks:
       - auth-network
 

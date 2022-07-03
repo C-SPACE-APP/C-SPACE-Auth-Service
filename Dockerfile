@@ -8,8 +8,6 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 3003
-
 RUN apt-get update && \
     apt-get install curl -y
 
